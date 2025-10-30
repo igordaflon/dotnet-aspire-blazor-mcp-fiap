@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.35906.104
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSample.ServiceDefaults", "src\McpSample.ServiceDefaults\McpSample.ServiceDefaults.csproj", "{63E130E2-B108-D8A0-C6C6-0C05493F0690}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSample.AspNetCoreSseServer", "src\McpSample.AspNetCoreSseServer\McpSample.AspNetCoreSseServer.csproj", "{C9D8E344-77A7-C7C8-4F2B-D9521B6A441B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSample.BlazorChat", "src\McpSample.Chat\McpSample.BlazorChat.csproj", "{6CC10BEE-2C2D-1BE7-4111-17587C4F7CC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "McpSample.AppHost", "src\McpSample.AppHost\McpSample.AppHost.csproj", "{F73B9265-83CA-6ACB-BBE0-71D5856E1CB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 Aspire", "1 Aspire", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 MCP Server", "2 MCP Server", "{9FE8D6F9-2B76-4BF7-9E29-884286C721C1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 Client", "3 Client", "{09DEE05B-519A-442E-A5E6-E1AE1E977F20}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63E130E2-B108-D8A0-C6C6-0C05493F0690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63E130E2-B108-D8A0-C6C6-0C05493F0690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63E130E2-B108-D8A0-C6C6-0C05493F0690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63E130E2-B108-D8A0-C6C6-0C05493F0690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9D8E344-77A7-C7C8-4F2B-D9521B6A441B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9D8E344-77A7-C7C8-4F2B-D9521B6A441B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9D8E344-77A7-C7C8-4F2B-D9521B6A441B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9D8E344-77A7-C7C8-4F2B-D9521B6A441B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CC10BEE-2C2D-1BE7-4111-17587C4F7CC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CC10BEE-2C2D-1BE7-4111-17587C4F7CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CC10BEE-2C2D-1BE7-4111-17587C4F7CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CC10BEE-2C2D-1BE7-4111-17587C4F7CC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F73B9265-83CA-6ACB-BBE0-71D5856E1CB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F73B9265-83CA-6ACB-BBE0-71D5856E1CB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F73B9265-83CA-6ACB-BBE0-71D5856E1CB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F73B9265-83CA-6ACB-BBE0-71D5856E1CB9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{63E130E2-B108-D8A0-C6C6-0C05493F0690} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{C9D8E344-77A7-C7C8-4F2B-D9521B6A441B} = {9FE8D6F9-2B76-4BF7-9E29-884286C721C1}
+		{6CC10BEE-2C2D-1BE7-4111-17587C4F7CC6} = {09DEE05B-519A-442E-A5E6-E1AE1E977F20}
+		{F73B9265-83CA-6ACB-BBE0-71D5856E1CB9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E7647F4-F1FE-4A6B-86AD-FAB7C91CA608}
+	EndGlobalSection
+EndGlobal

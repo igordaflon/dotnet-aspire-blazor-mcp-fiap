@@ -28,20 +28,17 @@ builder.Services.AddSingleton<ILogger>(sp => sp.GetRequiredService<ILogger<Progr
 builder.Services.AddSingleton<IMcpClient>(sp =>
 {
     McpClientOptions mcpClientOptions = new()
-    { ClientInfo = new() { Name = "AspNetCoreSseClient", Version = "1.0.0" } };
+    { 
+        ClientInfo = new() { Name = "AspNetCoreSseClient", Version = "1.0.0" } 
+    };
 
-    var client = new HttpClient();
-    client.BaseAddress = new("https://localhost:7133/sse");
-
-    // can't use the service discovery for ["https +http://aspnetsseserver"]
-    // fix: read the environment value for the key 'services__aspnetsseserver__https__0' to get the url for the aspnet core sse server
-    //var serviceName = "aspnetsseserver";
-    //var name = $"services__{serviceName}__https__0";
-    //var url = Environment.GetEnvironmentVariable(name) + "/sse";
+    HttpClient client = new()
+    {
+        BaseAddress = new("https://localhost:7133/sse")
+    };
 
     SseClientTransportOptions sseTransportOptions = new()
     {
-        //Endpoint = new Uri("https+http://aspnetsseserver")
         Endpoint = client.BaseAddress
     };
 

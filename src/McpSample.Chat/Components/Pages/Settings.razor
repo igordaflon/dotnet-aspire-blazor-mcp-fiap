@@ -1,43 +1,42 @@
-﻿@page "/settings"
+﻿@page "/configuracoes"
 @rendermode InteractiveServer
 
-<PageTitle>Settings</PageTitle>
+<PageTitle>Configurações</PageTitle>
 
-<h1>Settings</h1>
+<h1>Configurações</h1>
 
 <div>
     <label for="endpoint">Endpoint:</label>
     <input type="url" id="endpoint" @bind="endpoint" class="input-field" />
 </div>
 <div>
-    <label for="deploymentName">Deployment Name:</label>
-    <input type="text" id="deploymentName" @bind="deploymentName" class="input-field" />
+    <label for="deploymentName">Nome do Modelo:</label>
+    <input type="text" id="deploymentName" @bind="nomeModelo" class="input-field" />
 </div>
 <div>
     <label for="apiKey">API Key / GitHub Token:</label>
-    <input type="password" id="apiKey" @bind="apiKey" class="input-field" />
+    <input type="password" id="apiKey" @bind="chaveApi" class="input-field" />
 </div>
 
-<button class="btn btn-primary" @onclick="SaveSettings">SAVE</button>
-<button class="btn btn-secondary" @onclick="SetOllamaDefaults">Set Ollama Default values</button>
-<button class="btn btn-secondary" @onclick="SetGitHubModelsDefaults">Set GitHub Models Default Endpoint</button>
+<button class="btn btn-primary" @onclick="SaveSettings">Salvar</button>
+<button class="btn btn-secondary" @onclick="SetOllamaDefaults">Setar configuração padrão Ollama</button>
+<button class="btn btn-secondary" @onclick="SetGitHubModelsDefaults">Setar configuração padrão GitHub Models</button>
 
-<p></p>
 <p>
-    To create a GitHub token to be used in the <strong>API Key / GitHub Token</strong> field, please follow the instructions
-    <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank">here</a>.
+    Para criar um token do GitHub para ser usado no campo <strong>API Key / GitHub Token</strong>, siga as instruções
+    <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank">aqui</a>.
 </p>
 
-@if (!string.IsNullOrEmpty(saveMessage))
+@if (!string.IsNullOrEmpty(mensagemSalvar))
 {
-    <div class="save-message">@saveMessage</div>
+    <div class="save-message">@mensagemSalvar</div>
 }
 
 @code {
     private string endpoint = string.Empty;
-    private string apiKey = string.Empty;
-    private string deploymentName = string.Empty;
-    private string saveMessage = string.Empty;
+    private string chaveApi = string.Empty;
+    private string nomeModelo = string.Empty;
+    private string mensagemSalvar = string.Empty;
 
     [Inject]
     private IConfiguration Configuration { get; set; } = default!;
@@ -45,34 +44,34 @@
     protected override void OnInitialized()
     {
         endpoint = Configuration["endpoint"] ?? string.Empty;
-        apiKey = Configuration["apikey"] ?? string.Empty;
-        deploymentName = Configuration["deploymentname"] ?? string.Empty;
+        chaveApi = Configuration["apikey"] ?? string.Empty;
+        nomeModelo = Configuration["deploymentname"] ?? string.Empty;
     }
 
     private void SaveSettings()
     {
         // Save the settings to the configuration
         Configuration["endpoint"] = endpoint;
-        Configuration["apikey"] = apiKey;
-        Configuration["deploymentname"] = deploymentName;
+        Configuration["apikey"] = chaveApi;
+        Configuration["deploymentname"] = nomeModelo;
 
         // Display a message to inform the user that the changes were saved
-        saveMessage = "Settings have been saved successfully.";
+        mensagemSalvar = "As configurações foram salvas com sucesso.";
     }
 
     private void SetGitHubModelsDefaults()
     {
         endpoint = "https://models.inference.ai.azure.com";
-        apiKey = "<your GitHub Personal Access Token here>";
-        deploymentName = "< your model name here>";
+        chaveApi = "<informe seu GitHub Personal Access Token>";
+        nomeModelo = "<nome do modelo>";
 
     }
 
     private void SetOllamaDefaults()
     {
         endpoint = "http://localhost:11434/";
-        apiKey = string.Empty;
-        deploymentName = "llama3.2";
+        chaveApi = string.Empty;
+        nomeModelo = "llama3.2";
     }
 }
 

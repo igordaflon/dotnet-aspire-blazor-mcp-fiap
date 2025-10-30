@@ -1,27 +1,21 @@
-using McpSample.AspNetCoreSseServer;
-using ModelContextProtocol;
+using McpSample.AspNetCoreSseServer.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add default services
 builder.AddServiceDefaults();
 builder.Services.AddProblemDetails();
 
-// add MCP server
 builder.Services
     .AddMcpServer()
     .WithHttpTransport()
-    .WithTools<Jokes>()
-    .WithTools<WeatherTool>();
-//.WithToolsFromAssembly();
+    .WithTools<ClimaTool>();
+
 var app = builder.Build();
 
-// Initialize default endpoints
 app.MapDefaultEndpoints();
 app.UseHttpsRedirection();
 
-// map endpoints
-app.MapGet("/", () => $"Hello MCP Server! {DateTime.Now}");
+app.MapGet("/", () => $"MCP Server OK - {DateTime.Now}");
 app.MapMcp();
 
 app.Run();

@@ -2,7 +2,6 @@
 @using Azure
 @using Azure.AI.OpenAI
 @using Azure.Identity
-@using McpSample.BlazorChat.Services
 @using Microsoft.Extensions.AI
 @using Microsoft.Extensions.Configuration
 @using System.Text.RegularExpressions
@@ -18,12 +17,12 @@
 
 <div class="chat-container">
     <div class="chat-bubble assistant">
-        <div class="chat-title">Chat with an MCP Server</div>
+        <div class="chat-title">Chat com um MCP Server</div>
         <div class="chat-content">
-            <p>Hi, I'm a client to test MCP using a model <b>[@deploymentName]</b> with <b>[@clientMode]</b></p>
-            <p>Check the Settings page to test the model using GitHub Models, Ollama or Azure AI Foundry or to use custom settings.</p>
+            <p>Oi, eu sou um cliente MCP usando o modelo <b>[@nomeModelo]</b> com <b>[@modoClient]</b></p>
+            <p>Vá no menu Configurações para usar outros modelos como GitHub Models, Ollama, Azure AI ou utilizar configurações personalizadas.</p>
         </div>
-        <div class="chat-title">Current MCP Tools in the Server:</div>
+        <div class="chat-title">MCP Tools disponíveis:</div>
         <div class="chat-content">
             @if (tools is not null)
                 foreach (var tool in tools)
@@ -33,7 +32,7 @@
         </div>
     </div>
 
-    @foreach (var message in ChatMessages)
+    @foreach (var message in mensagensChat)
     {
         string chatBubbleClass = string.Empty;
         string messageContent = string.Empty;
@@ -46,12 +45,12 @@
 
         if (message.Role == ChatRole.User)
         {
-            messageTitle = "User";
+            messageTitle = "Usuário";
             chatBubbleClass = "chat-bubble user";
         }
         if (message.Role == ChatRole.Assistant)
         {
-            messageTitle = "Assistant";
+            messageTitle = "Assistente";
             chatBubbleClass = "chat-bubble assistant";
 
             // in case of using a reasoning model
@@ -109,7 +108,7 @@
     }
 </div>
 
-@if (isLoading)
+@if (estaCarregando)
 {
     <div class="loading-container">
         <div class="loading-ring"></div>
@@ -117,81 +116,79 @@
 }
 
 <div class="chat-input-container">
-    <input type="text" @bind="userQuestion" placeholder="Ask a question..." class="chat-input" />
-    <button @onclick="AskQuestion" type="submit" class="chat-button">Chat</button>
+    <input type="text" @bind="perguntaUsuario" placeholder="Fale qualquer coisa..." class="chat-input" />
+    <button @onclick="PerguntarAsync" type="submit" class="chat-button">Enviar</button>
 </div>
 
-@if (!string.IsNullOrEmpty(errorDetails))
+@if (!string.IsNullOrEmpty(detalhesErro))
 {
     <div class="error-container">
-        <div class="error-title">Error:</div>
-        <div class="error-content">@errorDetails</div>
+        <div class="error-title">Detalhes do Erro:</div>
+        <div class="error-content">@detalhesErro</div>
     </div>
 }
 
 @code {
-    private bool isLoading = false;
-    private string? chatResponse;
-    private string userQuestion = string.Empty;
-    private string errorDetails = string.Empty;
+    private bool estaCarregando = false;
+    private string perguntaUsuario = string.Empty;
+    private string detalhesErro = string.Empty;
     private Microsoft.Extensions.AI.IChatClient? client;
-    private string apiKey = string.Empty;
+    private string chaveApi = string.Empty;
     private string endpoint = string.Empty;
-    private string deploymentName = "llama3.2";
-    private string clientMode = string.Empty;
+    private string nomeModelo = "llama3.2";
+    private string modoClient = string.Empty;
     private IList<McpClientTool> tools = null!;
     [Inject] private IConfiguration Configuration { get; set; } = default!;
     [Inject] private ILogger<Program> Logger { get; set; } = default!;
-    private IList<Microsoft.Extensions.AI.ChatMessage> ChatMessages = new List<Microsoft.Extensions.AI.ChatMessage>();
+    private IList<Microsoft.Extensions.AI.ChatMessage> mensagensChat = new List<Microsoft.Extensions.AI.ChatMessage>();
 
     protected override async Task OnInitializedAsync()
     {
-        CreateChat();
+        InicializarChat();
 
-        // get mcp server tools
+        // Lista as tools de um MCP Server
         tools = await McpClient.ListToolsAsync();
-
-        // system message
-        ChatMessages.Add(new ChatMessage(ChatRole.System, "You are a helpful assistant. You always replies using text and emojis. You never generate HTML or Markdown. You only do what the user ask you to do. If you don't have a function to answer a question, you just answer que question"));
+        
+        mensagensChat.Add(new ChatMessage(ChatRole.System, "Você é um assistente prestativo. Você sempre responde usando texto e emojis. Você nunca gera HTML ou Markdown. Você só faz o que o usuário pedir para fazer. Se não tiver uma função para responder a uma pergunta, apenas responda a pergunta."));
     }
 
-    private async Task AskQuestion(MouseEventArgs e)
+    private async Task PerguntarAsync(MouseEventArgs e)
     {
         try
         {
-            isLoading = true;
+            estaCarregando = true;
             StateHasChanged();
 
             if (client == null)
             {
-                Logger.LogInformation("Chat component is not initialized.");
+                Logger.LogInformation("Componente de chat não inicializado.");
                 return;
             }
 
-            Logger.LogInformation($"Add user question: {userQuestion}");
-            ChatMessages.Add(new ChatMessage(ChatRole.User, userQuestion));
+            Logger.LogInformation($"Adicionar pergunta do usuário: {perguntaUsuario}");
+            mensagensChat.Add(new ChatMessage(ChatRole.User, perguntaUsuario));
 
             // Clear the userQuestion textbox
-            userQuestion = string.Empty;
+            perguntaUsuario = string.Empty;
 
-            var response = await client.GetResponseAsync(ChatMessages, new() { Tools = [.. tools] });
-            Logger.LogInformation($"Model Response: {response}");
-            ChatMessages.AddMessages(response);
+            var response = await client.GetResponseAsync(mensagensChat, new() { Tools = [.. tools] });
+            Logger.LogInformation($"Resposta do Modelo: {response}");
+            mensagensChat.AddMessages(response);
             StateHasChanged();
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "An error occurred while processing the chat request.");
-            errorDetails = ex.ToString();
+            Logger.LogError(ex, "Erro no processamento do Request");
+            detalhesErro = ex.ToString();
         }
         finally
         {
-            isLoading = false;
+            estaCarregando = false;
             StateHasChanged();
         }
     }
 
-    private void CreateChat()
+    private void InicializarChat()
     {
         try
         {
@@ -199,35 +196,35 @@
 
             // read the settings from the configuration
             endpoint = Configuration["endpoint"] ?? throw new ArgumentNullException("Endpoint");
-            apiKey = Configuration["apikey"] ?? string.Empty;
-            deploymentName = Configuration["deploymentname"] ?? "llama3.2";
+            chaveApi = Configuration["apikey"] ?? string.Empty;
+            nomeModelo = Configuration["deploymentname"] ?? "llama3.2";
 
             Logger.LogInformation($"===================================================");
-            Logger.LogInformation($"Chat info - Endpoint: {endpoint} - DeploymentName: {deploymentName} - ApiKey length: {apiKey.Length}");
+            Logger.LogInformation($"Chat info - Endpoint: {endpoint} - DeploymentName: {nomeModelo} - ApiKey length: {chaveApi.Length}");
 
             // check for localhost, that's mean ollama
             if (endpoint.Contains("localhost", StringComparison.OrdinalIgnoreCase))
             {
-                clientMode = "Ollama";
+                modoClient = "Ollama";
                 Logger.LogInformation("Using localhost endpoint - Ollama");
                 var ollamaEndpoint = new Uri(endpoint);
                 client = new OllamaChatClient(
                     endpoint: ollamaEndpoint,
-                    modelId: deploymentName)
+                    modelId: nomeModelo)
                     .AsBuilder()
                     .UseFunctionInvocation()
                     .Build();
             }
             else
             {
-                if (string.IsNullOrEmpty(apiKey))
+                if (string.IsNullOrEmpty(chaveApi))
                 {
-                    clientMode = "Azure with Default Credentials";
+                    modoClient = "Azure with Default Credentials";
                     Logger.LogInformation("Using DefaultAzureCredential");
                     client = new AzureOpenAIClient(
                         new Uri(endpoint),
                         new DefaultAzureCredential())
-                        .AsChatClient(deploymentName)
+                        .AsChatClient(nomeModelo)
                         .AsBuilder()
                         .UseFunctionInvocation()
                         .Build();
@@ -237,19 +234,19 @@
                     // Check if it's GitHub Models
                     if (endpoint.Contains("models.inference.ai.azure.com", StringComparison.OrdinalIgnoreCase))
                     {
-                        clientMode = "GitHub Models";
+                        modoClient = "GitHub Models";
                     }
                     else
                     {
-                        clientMode = "Using Endpoint and ApiKey";
+                        modoClient = "Using Endpoint and ApiKey";
                     }
 
                     Logger.LogInformation("Using ApiKey");
                     var azureClient =
                         new Azure.AI.Inference.ChatCompletionsClient(
                         endpoint: new Uri(endpoint),
-                        new AzureKeyCredential(apiKey));
-                    client = azureClient.AsIChatClient(deploymentName)
+                        new AzureKeyCredential(chaveApi));
+                    client = azureClient.AsIChatClient(nomeModelo)
                          .AsBuilder()
                          .UseFunctionInvocation()
                          .Build();     
@@ -260,7 +257,7 @@
         catch (Exception ex)
         {
             Logger.LogError(ex, "An error occurred while initializing the chat component.");
-            errorDetails = ex.ToString();
+            detalhesErro = ex.ToString();
         }
     }
 
